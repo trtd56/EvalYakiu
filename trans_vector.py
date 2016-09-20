@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from gensim.models import word2vec
+from generate_wakati import split_sentence
 
 class TransVecotr():
 
@@ -63,8 +64,13 @@ class TransVecotr():
                     vec = self.model[word.decode('utf-8')]
                 except KeyError:
                     vec = self.model.seeded_vector(word)
-                #doc_vec.extend(vec)
                 doc_vec.append(vec)
                 width = len(vec)
             doc_vec_list.append(doc_vec)
         return doc_vec_list, width
+
+    def gen_pred_vec(self, text, max_len):
+        sp_text = [split_sentence(text), [u"_" for i in range(max_len)]]
+        rev_doc_list, _ = self.generate_rev_doc(sp_text)
+        doc_vec_list, width = self.trans_vector(rev_doc_list)
+        return doc_vec_list[0]
